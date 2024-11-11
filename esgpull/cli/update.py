@@ -127,6 +127,7 @@ def update(
         with esg.ui.spinner("Fetching files"):
             coros = []
             for qf in qfs:
+                breakpoint()
                 coro = esg.context._files(*qf.results, keep_duplicates=False)
                 coros.append(coro)
             files = esg.context.sync_gather(*coros)
@@ -186,4 +187,10 @@ def update(
                         elif has_legacy and legacy in file_db.queries:
                             esg.db.unlink(query=legacy, file=file_db)
                         esg.db.link(query=qf.query, file=file)
+                        # In the file table, the primary key is the file SHA.
+                        # This means that files with the same SHA on multiple nodes
+                        # cannot both be stored in the database.
+                        # In other words, this line fails with a conflict error.
+                        # esg.db.add(file)
+                        # There also doesn't seem to be a way to remove tracked files.
         esg.ui.raise_maybe_record(Exit(0))

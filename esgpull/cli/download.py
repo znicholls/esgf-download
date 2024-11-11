@@ -55,9 +55,30 @@ def download(
         queue: list[File] = []
         for query in graph.queries.values():
             for file in query.files:
-                if file.data_node not in query.selection.data_node:
-                    msg = "File coming from wrong data node"
-                    raise AssertionError(msg)
+                if len(query.selection.data_node) > 0:
+                    if len(query.selection.data_node) > 1:
+                        raise NotImplementedError
+
+                    target_data_node = query.selection.data_node[0]
+                    if file.data_node != target_data_node:
+                        correct_file = (
+                            esg.db.session.query(File)
+                            .filter(File.file_id == file.file_id)
+                            .filter(File.data_node == target_data_node)
+                            .all()
+                        )
+                        import pandas as pd
+
+                        all_files = pd.read_sql(
+                            esg.db.session.query(File).statement,
+                            esg.db._engine,
+                        )
+                        breakpoint()
+                        if len(correct_file) != 1:
+                            msg = "File coming from wrong data node and no fix"
+                            raise AssertionError(msg)
+
+                        file = correct_file[0]
 
                 if file.status == FileStatus.Queued and file.sha not in shas:
                     shas.add(file.sha)
