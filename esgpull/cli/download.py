@@ -43,6 +43,7 @@ def download(
             esg.graph.load_db()
             graph = esg.graph
         else:
+            # Gives back queries with the wrong files
             queries = get_queries(esg.graph, query_id, tag)
             graph = esg.graph.subgraph(
                 *queries,
@@ -54,6 +55,10 @@ def download(
         queue: list[File] = []
         for query in graph.queries.values():
             for file in query.files:
+                if file.data_node not in query.selection.data_node:
+                    msg = "File coming from wrong data node"
+                    raise AssertionError(msg)
+
                 if file.status == FileStatus.Queued and file.sha not in shas:
                     shas.add(file.sha)
                     queue.append(file)

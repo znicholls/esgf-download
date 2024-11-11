@@ -259,6 +259,7 @@ class synda_file:
 class query_file:
     @staticmethod
     def link(query: Query, file: File) -> sa.Insert:
+        # This link is too simple, the link should be based on data node as well.
         return sa.insert(query_file_proxy).values(
             query_sha=query.sha, file_sha=file.sha
         )

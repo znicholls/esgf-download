@@ -170,6 +170,8 @@ def update(
                         new_files,
                         description=qf.query.rich_name,
                     ):
+                        # This is just a check on sha,
+                        # which isn't ideal for different data nodes but might not be the issue...
                         file_db = esg.db.get(File, file.sha)
                         if file_db is None:
                             if esg.db.has_file_id(file):
