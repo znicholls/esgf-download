@@ -73,7 +73,6 @@ def download(
                             esg.db.session.query(File).statement,
                             esg.db._engine,
                         )
-                        breakpoint()
                         if len(correct_file) != 1:
                             msg = "File coming from wrong data node and no fix"
                             raise AssertionError(msg)

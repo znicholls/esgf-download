@@ -127,7 +127,6 @@ def update(
         with esg.ui.spinner("Fetching files"):
             coros = []
             for qf in qfs:
-                breakpoint()
                 coro = esg.context._files(*qf.results, keep_duplicates=False)
                 coros.append(coro)
             files = esg.context.sync_gather(*coros)
